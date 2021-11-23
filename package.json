@@ -1,0 +1,26 @@
+{
+  "name": "react-native-events-handler",
+  "version": "0.0.1",
+  "description": "Event handler",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/YraZinchenko/react-native-event-handler.git"
+  },
+  "author": "Yuri Zinchenko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YraZinchenko/react-native-event-handler/issues"
+  },
+  "homepage": "https://github.com/YraZinchenko/react-native-event-handler#readme",
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.15.11",
+    "@react-native-community/netinfo": "^7.0.0",
+    "react": "^17.0.2",
+    "react-native": "^0.66.3",
+    "react-native-fs": "^2.18.0"
+  }
+}
