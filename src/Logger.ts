@@ -8,7 +8,7 @@ import { IRestApiOptions, IRpcApiOptions, IFileTransportConfig, IConfig } from '
 
 const isDev = process.env.NODE_ENV === 'development';
 
-export class Logger {
+class Logger {
     private restApi: any;
     private rpcApi: any;
     private intervalId: any;
@@ -24,7 +24,7 @@ export class Logger {
     private fileTransportConfig: IFileTransportConfig;
     private logLevelsToHandle: string[];
 
-    constructor(setupConfig : IConfig) {
+    constructor() {
         this.useRestApi = defaultConfig.useRestApi;
         this.useRpcApi = defaultConfig.useRpcApi;
         this.useConnectionListener = defaultConfig.useConnectionListener;
@@ -35,7 +35,9 @@ export class Logger {
         this.rpcApiOptions = defaultConfig.rpcApiOptions;
         this.fileTransportConfig = defaultConfig.fileTransportConfig;
         this.logLevelsToHandle = defaultConfig.logLevelsToHandle;
+    }
 
+    setup(setupConfig : IConfig) {
         if (setupConfig.useLogFile) {
             this.useLogFile = setupConfig.useLogFile;
         }
@@ -161,3 +163,5 @@ export class Logger {
         }
     }
 }
+
+export default new Logger();

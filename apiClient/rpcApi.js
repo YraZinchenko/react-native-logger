@@ -1,12 +1,14 @@
 export default class RpcApiClient {
-    constructor({ prefix, headers } = {}) {
-        if (!prefix) throw new Error('[prefix] required');
+    constructor({ url, headers, method } = {}) {
+        if (!url) throw new Error('[prefix] required');
+        if (!method) throw new Error('[method] required');
 
-        this.prefix = prefix;
+        this.url = url;
         this.headers = headers;
+        this.method = method;
     }
 
-    async request({ method, body }) {
+    async request({ body }) {
         const options = {
             method,
             headers: this.headers,
@@ -14,7 +16,7 @@ export default class RpcApiClient {
         };
 
         try {
-            const response = await fetch(this.prefix, options);
+            const response = await fetch(this.url, options);
 
             if (response.status >= 400) {
                 throw new Error('Bad response from server');

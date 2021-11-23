@@ -11,6 +11,7 @@ interface IFileTransportConfig {
 interface IRpcApiOptions {
     url : string;
     headers : object;
+    method: string;
 }
 
 interface IConfig {

@@ -19,7 +19,8 @@ export const defaultConfig : IConfig = {
         url: '',
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        method: ''
     },
     fileTransportConfig: {
         fileName: '',
