@@ -1,5 +1,5 @@
 {
-  "name": "react-native-events-handler",
+  "name": "react-native-logg-handler",
   "version": "0.0.1",
   "description": "Event handler",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/YraZinchenko/react-native-event-handler.git"
+    "url": "https://github.com/YraZinchenko/react-native-logger.git"
   },
   "author": "Yuri Zinchenko",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/YraZinchenko/react-native-event-handler/issues"
+    "url": "https://github.com/YraZinchenko/react-native-logger/issues"
   },
-  "homepage": "https://github.com/YraZinchenko/react-native-event-handler#readme",
+  "homepage": "https://github.com/YraZinchenko/react-native-logger#readme",
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.15.11",
     "@react-native-community/netinfo": "^7.0.0",

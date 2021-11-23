@@ -46,11 +46,13 @@ export class Logger {
 
         if (setupConfig.useRpcApi && setupConfig.rpcApiOptions) {
             this.useRpcApi = setupConfig.useRpcApi;
+            this.rpcApiOptions = setupConfig.rpcApiOptions;
             this.rpcApi = rpcApiConstructor(this.rpcApiOptions);
         }
 
         if (setupConfig.useRestApi && setupConfig.restApiOptions) {
             this.useRestApi = setupConfig.useRestApi;
+            this.restApiOptions = setupConfig.restApiOptions;
             this.restApi = restApiConstructor(this.restApiOptions);
         }
 
