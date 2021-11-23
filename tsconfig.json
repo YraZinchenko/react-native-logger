@@ -12,7 +12,8 @@
     "moduleResolution": "node",
     "noEmit": true,
     "strict": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "types": ["node"]
   },
   "exclude": [
     "node_modules",
