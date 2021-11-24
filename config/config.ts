@@ -1,4 +1,4 @@
-import { logLevels } from '../constants/logLevels.js';
+import { logLevels } from '../constants/logLevels';
 import { IConfig } from '../types/config';
 
 export const defaultConfig : IConfig = {

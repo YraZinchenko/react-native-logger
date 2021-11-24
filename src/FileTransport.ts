@@ -1,17 +1,7 @@
 import RNFS from 'react-native-fs';
-import { Logger } from './Logger';
 
-const defaultRNFSConfig = {
-    fileName: '', // file name where the logs will be written
-    filePath: '' // path to file
-};
-
-class FileTransport extends Logger {
-    constructor(props) {
-        super(props);
-    }
-
-    async saveToFile( savePath : string, contents, encoding = 'ascii' ) {
+class FileTransport {
+    async saveToFile(savePath : string, contents, encoding = 'ascii') {
         try {
             await RNFS.writeFile(savePath, contents, encoding);
         } catch (err: any) {
@@ -36,10 +26,4 @@ class FileTransport extends Logger {
     }
 }
 
-const initializeFileTranport = (config = defaultRNFSConfig) => {
-    return new FileTransport(config);
-}
-
-const fileTransport = { initializeFileTranport };
-
-export { fileTransport };
+export default new FileTransport();

@@ -1,7 +1,7 @@
 import NetInfo from '@react-native-community/netinfo';
 import { saveToAsyncStorage, getFromAsyncStorage } from './AsyncStorage';
-import { fileTransport } from './FileTransport';
-import { defaultConfig } from '../config/config.js';
+// import { fileTransport } from './FileTransport';
+import { defaultConfig } from '../config/config';
 import { logLevels } from '../constants/logLevels';
 import { rpcApiConstructor, restApiConstructor } from '../apiClient/index';
 import { IRestApiOptions, IRpcApiOptions, IFileTransportConfig, IConfig } from '../types/config';

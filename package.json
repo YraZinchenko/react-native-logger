@@ -1,8 +1,8 @@
 {
   "name": "react-native-logg-handler",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Event handler",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
     "test": "jest"
   },
