@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "rootDir": "src",
     "typeRoots" : ["./node_modules/@types", "./typings"],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
@@ -10,15 +11,11 @@
     "target": "es6",
     "module": "es6",
     "moduleResolution": "node",
-    "noEmit": true,
     "strict": true,
     "noImplicitAny": false,
-    "types": ["node"]
+    "outDir": "dist"
   },
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js",
-    "jest.config.js"
+  "include" : [
+    "src/index.ts"
   ]
 }

@@ -1,6 +1,5 @@
 import { logLevels } from './constants/logLevels';
-import Logger from './src/Logger';
-
+import Logger from './Logger';
 export default {
     Logger,
     levels: logLevels
