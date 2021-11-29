@@ -20,7 +20,8 @@ export const defaultConfig : IConfig = {
         headers: {
             'Content-Type': 'application/json'
         },
-        method: ''
+        method: '',
+        additionalOptions: {}
     },
     fileTransportConfig: {
         fileName: '',

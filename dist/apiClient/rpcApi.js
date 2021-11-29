@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 export default class RpcApiClient {
-    constructor({ url, headers, method } = {}) {
+    constructor({ url, headers, method, additionalOptions } = {}) {
         if (!url)
             throw new Error('[prefix] required');
         if (!method)
@@ -16,16 +16,20 @@ export default class RpcApiClient {
         this.url = url;
         this.headers = headers;
         this.method = method;
+        this.additionalRequestOptions = additionalOptions;
     }
-    request({ body }) {
+    request(events) {
         return __awaiter(this, void 0, void 0, function* () {
-            const options = {
+            const body = {
                 method,
+                parameters: Object.assign(Object.assign({}, this.additionalOptions), { events })
+            };
+            const requestOptions = {
                 headers: this.headers,
-                body: JSON.stringify(Object.assign({}, body))
+                body: JSON.stringify({ body })
             };
             try {
-                const response = yield fetch(this.url, options);
+                const response = yield fetch(this.url, Object.assign({}, requestOptions));
                 if (response.status >= 400) {
                     throw new Error('Bad response from server');
                 }

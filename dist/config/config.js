@@ -18,7 +18,8 @@ export const defaultConfig = {
         headers: {
             'Content-Type': 'application/json'
         },
-        method: ''
+        method: '',
+        additionalOptions: {}
     },
     fileTransportConfig: {
         fileName: '',

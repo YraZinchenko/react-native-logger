@@ -8,6 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import NetInfo from '@react-native-community/netinfo';
+import uuid from 'react-native-uuid';
 import { saveToAsyncStorage, getFromAsyncStorage } from './AsyncStorage';
 // import { fileTransport } from './FileTransport';
 import { defaultConfig } from './config/config';
@@ -54,10 +55,7 @@ class Logger {
     }
     handleStartListenerWithInterval() {
         this.intervalId = setInterval(() => __awaiter(this, void 0, void 0, function* () {
-            const events = yield this.checkWeHaveActiveEvents();
-            events.forEach((event) => __awaiter(this, void 0, void 0, function* () {
-                yield this.eventHandler(event.msg, event.eventBody);
-            }));
+            yield this.eventHandler();
         }), this.interval);
     }
     handleStartConnecitionListener() {
@@ -73,20 +71,20 @@ class Logger {
                 events.length
             ];
             if (!isReachableEvents.includes(false)) {
-                events.forEach((event) => __awaiter(this, void 0, void 0, function* () {
-                    yield this.eventHandler(event.msg, event.eventBody);
-                }));
+                yield this.eventHandler();
             }
             prevStateIsConnected = state.isConnected;
             prevStateIsInternetReachable = state.isInternetReachable;
         }));
     }
-    eventHandler(msg, eventBody) {
+    eventHandler() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 // need two apiClient, rpc and default
                 const appEvents = yield this.checkWeHaveActiveEvents();
-                yield saveToAsyncStorage('appEvents', appEvents.filter((activeEvent) => activeEvent.id !== eventBody.id));
+                if (this.useRpcApi) {
+                    this.rpcApi.request(appEvents);
+                }
             }
             catch (error) {
                 console.log('send to BE event error', error);
@@ -108,26 +106,39 @@ class Logger {
             clearInterval(this.intervalId);
         };
     }
-    immediatelyLogHanlder(msg, data) {
-        this.eventHandler(msg, data);
+    // immediatelyLogHanlder(msg:string, data: any) { // for immediately handle send log to BE
+    //     this.eventHandler();
+    // }
+    log(type = logLevels.debug, msg, eventBody, handleImmediately = false) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.console(type, msg, eventBody);
+            yield this.checkForHandleLog(type, msg, eventBody, handleImmediately);
+        });
     }
-    log(msg, eventBody, handleImmediately = false, type = logLevels.debug) {
-        this.console(msg, eventBody, handleImmediately, type);
-        this.checkForHandleLog(msg, eventBody, handleImmediately, type);
+    checkForHandleLog(type, msg, eventBody, handleImmediately) {
+        return __awaiter(this, void 0, void 0, function* () {
+            // if (handleImmediately) { // handle log immediately, not add to listeners
+            //     this.immediatelyLogHanlder(msg, eventBody);
+            //     return;
+            // }
+            if (this.logLevelsToHandle.includes(type)) {
+                const appEvents = yield this.checkWeHaveActiveEvents();
+                yield saveToAsyncStorage('appEvents', [
+                    ...appEvents,
+                    {
+                        id: uuid.v4(),
+                        message: eventBody.msg,
+                        time: new Date().toISOString(),
+                        body: eventBody // need clarification structure
+                    }
+                ]);
+                // this.eventHandler(msg, eventBody);
+            }
+        });
     }
-    checkForHandleLog(msg, eventBody, handleImmediately, type) {
-        throw new Error("Method not implemented.");
-    }
-    console(msg, eventBody, handleImmediately, type) {
+    console(type, msg, eventBody) {
         if (isDev)
             console[type](msg, eventBody); // enable console.log in dev mode but disable in prod for better perfomance
-        if (handleImmediately) { // handle log immediately, not add to listeners
-            this.immediatelyLogHanlder(msg, eventBody);
-            return;
-        }
-        if (this.logLevelsToHandle.includes(type)) {
-            this.eventHandler(msg, eventBody);
-        }
     }
 }
 export default new Logger();
