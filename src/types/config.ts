@@ -12,6 +12,7 @@ interface IRpcApiOptions {
     url : string;
     headers : object;
     method: string;
+    additionalOptions: object;
 }
 
 interface IConfig {

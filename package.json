@@ -1,8 +1,11 @@
 {
   "name": "react-native-logg-handler",
-  "version": "0.0.4",
-  "description": "Event handler",
-  "main": "./dist/index.js",
+  "version": "0.0.7",
+  "description": "Logger",
+  "main": "dist/index.js",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "test": "jest"
   },
@@ -20,8 +23,8 @@
     "@react-native-async-storage/async-storage": "^1.15.11",
     "@react-native-community/netinfo": "^7.0.0",
     "react": "^17.0.2",
-    "react-native": "^0.66.3",
-    "react-native-fs": "^2.18.0"
+    "react-native-fs": "^2.18.0",
+    "react-native-uuid": "^2.0.1"
   },
   "devDependencies": {
     "@types/node": "^16.11.9"

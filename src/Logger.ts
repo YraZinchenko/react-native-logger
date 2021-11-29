@@ -1,4 +1,5 @@
 import NetInfo from '@react-native-community/netinfo';
+import uuid from 'react-native-uuid';
 import { saveToAsyncStorage, getFromAsyncStorage } from './AsyncStorage';
 // import { fileTransport } from './FileTransport';
 import { defaultConfig } from './config/config';
@@ -7,7 +8,6 @@ import { rpcApiConstructor, restApiConstructor } from './apiClient/index';
 import { IRestApiOptions, IRpcApiOptions, IFileTransportConfig, IConfig } from './types/config';
 
 const isDev = process.env.NODE_ENV === 'development';
-
 class Logger {
     private restApi: any;
     private rpcApi: any;
@@ -70,11 +70,7 @@ class Logger {
 
     private handleStartListenerWithInterval() {
         this.intervalId = setInterval(async () => {
-            const events = await this.checkWeHaveActiveEvents();
-    
-            events.forEach(async (event: any) => {
-                await this.eventHandler(event.msg, event.eventBody);
-            });
+            await this.eventHandler();
         }, this.interval);
     }
 
@@ -99,9 +95,7 @@ class Logger {
             ];
 
             if (!isReachableEvents.includes(false)) {
-                events.forEach(async (event: any) => {
-                    await this.eventHandler(event.msg, event.eventBody);
-                });
+                await this.eventHandler();
             }
 
             prevStateIsConnected = state.isConnected;
@@ -109,13 +103,14 @@ class Logger {
         });
     }
 
-    private async eventHandler(msg: string, eventBody: any) {
+    private async eventHandler() {
         try {
             // need two apiClient, rpc and default
             const appEvents = await this.checkWeHaveActiveEvents();
-    
-            await saveToAsyncStorage('appEvents', appEvents.filter((activeEvent: any) => activeEvent.id !== eventBody.id));
-            
+
+            if (this.useRpcApi) {
+                this.rpcApi.request(appEvents);
+            }
         } catch (error) {
             console.log('send to BE event error', error);
         }
@@ -137,30 +132,40 @@ class Logger {
         }
     }
 
-    immediatelyLogHanlder(msg:string, data: any) { // for immediately handle send log to BE
-        this.eventHandler( msg, data );
+    // immediatelyLogHanlder(msg:string, data: any) { // for immediately handle send log to BE
+    //     this.eventHandler();
+    // }
+
+    async log(type = logLevels.debug, msg: string, eventBody: any, handleImmediately = false) {
+        this.console(type, msg, eventBody);
+        await this.checkForHandleLog(type, msg, eventBody, handleImmediately);
     }
 
-    log( msg: string, eventBody: any, handleImmediately = false, type = logLevels.debug ) {
-        this.console(msg, eventBody, handleImmediately, type);
-        this.checkForHandleLog(msg, eventBody, handleImmediately, type);
-    }
-    checkForHandleLog(msg: any, eventBody: any, handleImmediately: boolean, type: string) {
-        throw new Error("Method not implemented.");
-    }
+    async checkForHandleLog(type: string, msg: any, eventBody: any, handleImmediately: boolean) {
+        // if (handleImmediately) { // handle log immediately, not add to listeners
+        //     this.immediatelyLogHanlder(msg, eventBody);
 
-    console(msg: string, eventBody: any, handleImmediately: boolean, type: string) {
-        if (isDev) console[type](msg, eventBody); // enable console.log in dev mode but disable in prod for better perfomance
-
-        if (handleImmediately) { // handle log immediately, not add to listeners
-            this.immediatelyLogHanlder(msg, eventBody);
-
-            return;
-        }
+        //     return;
+        // }
 
         if (this.logLevelsToHandle.includes(type)) {
-            this.eventHandler(msg, eventBody);
+            const appEvents = await this.checkWeHaveActiveEvents();
+
+            await saveToAsyncStorage('appEvents', [
+                ...appEvents,
+                {
+                    id: uuid.v4(),
+                    message: eventBody.msg,
+                    time: new Date().toISOString(),
+                    body: eventBody // need clarification structure
+                }
+            ]);
+            // this.eventHandler(msg, eventBody);
         }
+    }
+
+    console(type: string, msg: string, eventBody: any) {
+        if (isDev) console[type](msg, eventBody); // enable console.log in dev mode but disable in prod for better perfomance
     }
 }
 
