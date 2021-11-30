@@ -13,13 +13,14 @@ export default class RpcApiClient {
         const body = {
             method,
             parameters: {
-                ...this.additionalOptions,
+                ...this.additionalRequestOptions,
                 events
             }
         }
         const requestOptions = {
             headers: this.headers,
-            body: JSON.stringify({ body })
+            body: JSON.stringify({ body }),
+            method: 'post'
         };
 
         try {
@@ -28,6 +29,7 @@ export default class RpcApiClient {
             if (response.status >= 400) {
                 throw new Error('Bad response from server');
             }
+
             const data = await response.json();
             const { body:dataBody } = data;
 

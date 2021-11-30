@@ -22,11 +22,12 @@ export default class RpcApiClient {
         return __awaiter(this, void 0, void 0, function* () {
             const body = {
                 method,
-                parameters: Object.assign(Object.assign({}, this.additionalOptions), { events })
+                parameters: Object.assign(Object.assign({}, this.additionalRequestOptions), { events })
             };
             const requestOptions = {
                 headers: this.headers,
-                body: JSON.stringify({ body })
+                body: JSON.stringify({ body }),
+                method: 'post'
             };
             try {
                 const response = yield fetch(this.url, Object.assign({}, requestOptions));

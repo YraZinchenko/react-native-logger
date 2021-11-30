@@ -103,13 +103,17 @@ class Logger {
         });
     }
 
-    private async eventHandler() {
+    private async eventHandler(events: any = null) {
         try {
             // need two apiClient, rpc and default
-            const appEvents = await this.checkWeHaveActiveEvents();
+            const appEvents = events || await this.checkWeHaveActiveEvents();
 
-            if (this.useRpcApi) {
-                this.rpcApi.request(appEvents);
+            if (appEvents && this.useRpcApi && appEvents.length > 0) {
+                const data = await this.rpcApi.request(appEvents);
+
+                if (data.result === 'ok') {
+                    await saveToAsyncStorage('appEvents', []);
+                }
             }
         } catch (error) {
             console.log('send to BE event error', error);
@@ -121,20 +125,27 @@ class Logger {
     }
 
     unSubscribeConnectionListener() {
-        return () => {
+        if (this.connectionListener) {
             this.connectionListener();
         }
     }
 
     unSubscribeIntervalListener() {
-        return () => {
+        if (this.intervalId) {
             clearInterval(this.intervalId);
         }
     }
 
-    // immediatelyLogHanlder(msg:string, data: any) { // for immediately handle send log to BE
-    //     this.eventHandler();
-    // }
+    async immediatelyLogHanlder(msg:string, eventBody: any) { // for immediately handle send log to BE
+        await this.eventHandler([
+            {
+                id: uuid.v4(),
+                message: msg,
+                time: new Date().toISOString(),
+                body: eventBody // need clarification structure
+            }
+        ]);
+    }
 
     async log(type = logLevels.debug, msg: string, eventBody: any, handleImmediately = false) {
         this.console(type, msg, eventBody);
@@ -142,11 +153,11 @@ class Logger {
     }
 
     async checkForHandleLog(type: string, msg: any, eventBody: any, handleImmediately: boolean) {
-        // if (handleImmediately) { // handle log immediately, not add to listeners
-        //     this.immediatelyLogHanlder(msg, eventBody);
+        if (handleImmediately) { // handle log immediately, not add to listeners
+            await this.immediatelyLogHanlder(msg, eventBody);
 
-        //     return;
-        // }
+            return;
+        }
 
         if (this.logLevelsToHandle.includes(type)) {
             const appEvents = await this.checkWeHaveActiveEvents();
@@ -155,12 +166,11 @@ class Logger {
                 ...appEvents,
                 {
                     id: uuid.v4(),
-                    message: eventBody.msg,
+                    message: msg,
                     time: new Date().toISOString(),
                     body: eventBody // need clarification structure
                 }
             ]);
-            // this.eventHandler(msg, eventBody);
         }
     }
 
