@@ -136,9 +136,10 @@ class Logger {
         }
     }
 
-    async immediatelyLogHanlder(msg:string, eventBody: any) { // for immediately handle send log to BE
+    async immediatelyLogHanlder(msg:string, eventBody: any, type: any) { // for immediately handle send log to BE
         await this.eventHandler([
             {
+                level: type,
                 id: uuid.v4(),
                 message: msg,
                 time: new Date().toISOString(),
@@ -154,7 +155,7 @@ class Logger {
 
     async checkForHandleLog(type: string, msg: any, eventBody: any, handleImmediately: boolean) {
         if (handleImmediately) { // handle log immediately, not add to listeners
-            await this.immediatelyLogHanlder(msg, eventBody);
+            await this.immediatelyLogHanlder(msg, eventBody, type);
 
             return;
         }
@@ -165,6 +166,7 @@ class Logger {
             await saveToAsyncStorage('appEvents', [
                 ...appEvents,
                 {
+                    level: type,
                     id: uuid.v4(),
                     message: msg,
                     time: new Date().toISOString(),
@@ -175,7 +177,7 @@ class Logger {
     }
 
     console(type: string, msg: string, eventBody: any) {
-        if (isDev) console[type](msg, eventBody); // enable console.log in dev mode but disable in prod for better perfomance
+        if (isDev) console[type](msg, eventBody, type); // enable console.log in dev mode but disable in prod for better perfomance
     }
 }
 

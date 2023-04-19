@@ -109,10 +109,11 @@ class Logger {
             clearInterval(this.intervalId);
         }
     }
-    immediatelyLogHanlder(msg, eventBody) {
+    immediatelyLogHanlder(msg, eventBody, type) {
         return __awaiter(this, void 0, void 0, function* () {
             yield this.eventHandler([
                 {
+                    level: type,
                     id: uuid.v4(),
                     message: msg,
                     time: new Date().toISOString(),
@@ -130,7 +131,7 @@ class Logger {
     checkForHandleLog(type, msg, eventBody, handleImmediately) {
         return __awaiter(this, void 0, void 0, function* () {
             if (handleImmediately) { // handle log immediately, not add to listeners
-                yield this.immediatelyLogHanlder(msg, eventBody);
+                yield this.immediatelyLogHanlder(msg, eventBody, type);
                 return;
             }
             if (this.logLevelsToHandle.includes(type)) {
@@ -138,6 +139,7 @@ class Logger {
                 yield saveToAsyncStorage('appEvents', [
                     ...appEvents,
                     {
+                        level: type,
                         id: uuid.v4(),
                         message: msg,
                         time: new Date().toISOString(),
@@ -149,7 +151,7 @@ class Logger {
     }
     console(type, msg, eventBody) {
         if (isDev)
-            console[type](msg, eventBody); // enable console.log in dev mode but disable in prod for better perfomance
+            console[type](msg, eventBody, type); // enable console.log in dev mode but disable in prod for better perfomance
     }
 }
 export default new Logger();
