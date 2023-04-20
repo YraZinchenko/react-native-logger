@@ -11,7 +11,7 @@ export default class RpcApiClient {
 
     async request(events) {
         const body = {
-            method,
+            method: this.method,
             parameters: {
                 ...this.additionalRequestOptions,
                 events

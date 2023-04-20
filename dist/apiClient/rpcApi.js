@@ -21,7 +21,7 @@ export default class RpcApiClient {
     request(events) {
         return __awaiter(this, void 0, void 0, function* () {
             const body = {
-                method,
+                method: this.method,
                 parameters: Object.assign(Object.assign({}, this.additionalRequestOptions), { events })
             };
             const requestOptions = {
